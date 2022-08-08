@@ -1,6 +1,6 @@
 const { defineConfig } = require("@vue/cli-service");
+const registerRouter = require("./backend/router");
 module.exports = defineConfig({
-  transpileDependencies: true,
   css: {
     loaderOptions: {
       sass: {
@@ -9,6 +9,11 @@ module.exports = defineConfig({
           @import "@/assets/scss/mixin.scss";
         `,
       },
+    },
+  },
+  devServer: {
+    onBeforeSetupMiddleware({ app }) {
+      registerRouter(app);
     },
   },
 });
