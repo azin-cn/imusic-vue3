@@ -1,0 +1,24 @@
+﻿@mixin bg-image($url) {
+  background-image: url($url + '@2x.png');
+  @media (-webkit-min-device-pixel-ratio: 3),(-webkit-min-device-pixel-ratio: 3) {
+    background-image: url($url + '@3x.png');
+  }
+}
+
+@mixin no-wrap() {
+  text-overflow: ellipsis;
+  white-space: hidden;
+  overflow: hidden;
+}
+
+@mixin extend-click() {
+  position: relative;
+  &:before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    bottom: -10px;
+    right: -10px;
+  }
+}
