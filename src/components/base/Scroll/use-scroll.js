@@ -5,7 +5,7 @@ import ObserveDOM from "@better-scroll/observe-dom";
 
 BScroll.use(ObserveDOM).use(PullDown);
 
-export default function useScroll(wrapperRef, options) {
+export default function useScroll(wrapperRef, options, emit) {
   const scroll = ref(null);
   onMounted(() => {
     const sval = (scroll.value = new BScroll(wrapperRef.value, {
@@ -13,6 +13,11 @@ export default function useScroll(wrapperRef, options) {
       observeDOM: true, // 开启 observe-dom 插件
       ...options,
     }));
+
+    if (options.probeType > 0) {
+      // 通过自定义事件，emit发送
+      sval.on("scroll", (pos) => emit("scroll", pos));
+    }
   });
 
   onUnmounted(() => {
