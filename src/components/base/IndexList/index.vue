@@ -63,7 +63,7 @@ function onItemClick(item) {
   emit("select", item);
 }
 
-const { groupRef, onScroll, fixedTitle, fixedStyle, currIndex: currentIndex } = useFixed(props);
+const { groupRef, fixedTitle, fixedStyle, currIndex: currentIndex, onScroll } = useFixed(props);
 
 const {
   titles: shortcutList,
