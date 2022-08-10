@@ -8,7 +8,13 @@
  * @returns
  */
 
-export function debounce(fn, delay = 300, callback = (result) => result) {
+export function debounce(
+  fn,
+  delay = 300,
+  options = {
+    callback: (result) => result,
+  }
+) {
   let timer;
   return function execute() {
     if (timer) {
@@ -19,21 +25,26 @@ export function debounce(fn, delay = 300, callback = (result) => result) {
     const args = arguments;
     timer = setTimeout(() => {
       timer = clearTimeout(timer);
-      Promise.resolve(fn.apply(context, args)).then(callback);
+      Promise.resolve(fn.apply(context, args)).then(options.callback);
     }, delay);
   };
 }
 
-export function throttle(fn, interval = 300, callback = (result) => result) {
-  let timer;
+export function throttle(
+  fn,
+  interval = 300,
+  options = {
+    callback: (result) => result,
+  }
+) {
+  let timer = Date.now();
   return function execute() {
-    if (timer) return;
+    const curr = Date.now();
+    if (curr - timer < interval) return;
 
+    timer = curr;
     const context = this;
     const args = arguments;
-    timer = setTimeout(() => {
-      timer = clearTimeout(timer); // 执行完成后，销毁并复制为undefined
-      Promise.resolve(fn.apply(context, args)).then(callback);
-    }, interval);
+    Promise.resolve(fn.apply(context, args)).then(options.callback);
   };
 }

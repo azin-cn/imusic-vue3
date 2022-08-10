@@ -39,11 +39,15 @@ const d = throttle(
     console.log("res", res);
   }
 );
-let timer = setInterval(() => {
-  i++;
-  console.log(i);
-  d();
-  if (i === 11) {
-    clearTimeout(timer);
-  }
-}, 100);
+// let timer = setInterval(() => {
+//   i++;
+//   console.log(i);
+//   d();
+//   if (i === 11) {
+//     clearTimeout(timer);
+//   }
+// }, 100);
+
+console.log(Date.now());
+
+console.log((1.22 & 1) === Math.floor(1.22));

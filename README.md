@@ -5,17 +5,17 @@
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Compiles and hot-reloads for development & production
 ```
 npm run serve
-```
-
-### Compiles and minifies for production
-```
 npm run build
 ```
 
 ## 项目记录
+
+### 第三方UI库的使用
+- BetterScroll
+
 ### Scss
 全局引入的是样式文件，若全局引入scss定义的变量|函数文件是无效的，组件引用scss定义的变量|函数|规则，有两种方案：
 1. 组件单独引入scss变量文件
@@ -34,7 +34,7 @@ css: {
 ```
 
 ### 配置backend
-这是一个真实数据的mork，通过webpack的devServer的before函数进行测试，默认端口号是9002，
+这是一个真实数据的mork，通过webpack的devServer的before函数进行测试，默认端口号是9002。当后端返回的数据不直接符合页面的需求时，应该将数据处理这一部分进行分离，如一般抽离到backend文件夹中，页面的生命周期发送请求获得预期的数据，页面发送请求部分不再处理复杂数据的逻辑。
 - 将以下依赖加入packages.json中
 ```json
 "dependencies"
@@ -58,6 +58,8 @@ module.exports = defineConfig({
   },
 });
 ```
+
+后端请求的逻辑详情以及数据的处理请看/backend/router
 - 再次执行 `npm install`，然后重启项目
 
 ### 响应式
@@ -111,3 +113,84 @@ https://www.runoob.com/vue3/vue3-custom-directive.html
   - ......
 - vnode 作为 el 参数收到的真实 DOM 元素的蓝图VNode。
 - prevNode 上一个虚拟节点，仅在 beforeUpdate 和 updated 钩子中可用。
+
+### IndexList组件 - 难点
+#### 1. 动态显式内容，吸顶效果
+实现原理：获取区间高度，数组后面的元素是前面各元素的高度和+元素本身的高度，也就是距离父元素的高度，通过监听滚动获取滚动的高度，判断滚动高度于区间高度的位置关系，最后就可以得到需要对应的位置关系，也就是得到需要显示的内容。注意：高度数组中第一个应为0，代表第一个元素之前的内容，起始也就是空。
+
+在此期间，ref的定义位置、计算的时机、提前push一个0、通过await等待下一个时刻的计算，这些都是细节。
+
+#### 2. 吸顶效果，后续递推
+不仅仅只是更换显式内容，还有后一个的标题栏顶替前一个的标题栏。
+
+实现原理：前一个子元素的底部就是后一个子元素的顶部，所以当前元素底部距离父元素顶部的高度=下一个元素顶部距离父元素顶部的高度，如果此时的距离小于标题栏的高度，此时上一个标题栏就可以被顶上去了。
+
+因为子元素高度数组中，提前push了一个0，子元素向后移动1，所以原有的数组元素-滚动高度变为：
+当前元素底部距离父元素顶部的高度 = 下一个元素顶部距离父元素顶部的高度 = 下一个数组元素 - 滚动高度
+
+### debounce throttle 实现
+- debounce 第一次是否运行
+- throttle 最后一次是否运行
+
+记录有趣的查找过程：
+```js
+watch(source, callback);
+```
+在watch的回调函数中，原有的回调函数：
+```js
+(y) => {
+  // 当滚动变化时，开始判断到底应该显示什么内容
+  for (let i = 0; i < heightsv.length - 1; i++) {
+    if (y >= heightsv[i] && y <= heightsv[i + 1]) {
+      // 如果滚动的高度大于前面元素的高度和，从小到大排序，之所以写成这样是为了性能优化，保证只有一次匹配的机会，即只渲染一次
+      currIndex.value = i;
+      distance.value = heightsv[i + 1] - y; // 距离顶部的高度
+    }
+  }
+  // 不必要的重复渲染，每一次响应式更新都会导致layout
+  // for (const h of heightsv) {
+  //   // if (y >= h) {
+  //   //   currIndex.value++;
+  //   // }
+  // }
+}
+```
+
+因为回调过快，选择使用debounce来限制，所以回调函数写成：
+```js
+debounce((y) => {
+  // 当滚动变化时，开始判断到底应该显示什么内容
+  for (let i = 0; i < heightsv.length - 1; i++) {
+    if (y >= heightsv[i] && y <= heightsv[i + 1]) {
+      // 如果滚动的高度大于前面元素的高度和，从小到大排序，之所以写成这样是为了性能优化，保证只有一次匹配的机会，即只渲染一次
+      currIndex.value = i;
+      distance.value = heightsv[i + 1] - y; // 距离顶部的高度
+    }
+  }
+}, 10)
+```
+
+看起来好像没有问题，还是原来的y参数，还是原来的回调函数。但是分析可以知道：在这个过程中，y参数已经不直接等于原有的y参数了，其在debounce中经过了一次转移，恰好位置又对上了。
+
+通常我们并不会在意，会默认加了debounce后原函数还是执行一样的功能，在使用上是正确的，但是在实际中这种情况还是得非常小心，因为一不注意参数就错乱了。
+
+分析其实很简单，debounce后的y参数之所以还能够收到callback参数的值，其实就是apply、call的原因；
+- apply、call将debounce返回的函数传入的参数即arguments，重新按照顺序传入了原回调函数，所以原回调函数与debounce中传入的fn的功能是一样的。当然也可以使用剩余参数。
+```js
+......
+return function () {
+  const context = this;
+  const args = arguments;
+  timer = setTimeout(() => {
+    timer = clearTimeout(timer);
+    fn.apply(context, args);
+  })
+}
+```
+
+### 性能优化的手段
+- 最好使用的是ref对象，而不是普通的元素对象
+
+
+### 常见JS技巧
+- 向下取整： 1.22 | 0 === Math.floor(1.22)
