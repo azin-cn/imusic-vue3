@@ -43,9 +43,10 @@ export default defineComponent({
 </script>
 
 <script setup>
-import { defineProps } from "vue";
+import { defineProps, defineEmits } from "vue";
 import Scroll from "@/components/base/Scroll";
 import useFixed from "./use-fixed";
+import useShortcut from "./use-shortcut";
 
 const props = defineProps({
   data: {
@@ -55,12 +56,21 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(["select"]);
+
 /** 歌手点击事件 */
 function onItemClick(item) {
   emit("select", item);
 }
 
-const { groupRef, onScroll, fixedTitle } = useFixed(props);
+const { groupRef, onScroll, fixedTitle, fixedStyle, currIndex: currentIndex } = useFixed(props);
+
+const {
+  titles: shortcutList,
+  scrollRef,
+  onShortcutTouchStart,
+  onShortcutTouchMove,
+} = useShortcut(props, groupRef);
 </script>
 
 <style scoped lang="scss">

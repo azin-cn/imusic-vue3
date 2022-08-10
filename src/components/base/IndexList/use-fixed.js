@@ -8,9 +8,26 @@ export default function useFixed(props) {
   const heightsv = heights.value;
   const scrollY = ref(0);
   const currIndex = ref(0);
+
+  // 控制title顶替
+  const TITLE_HEIGHT = ref(0);
+  const distance = ref(0);
+
   const fixedTitle = computed(() => {
+    if (scrollY.value < 0) return ""; // 保证可视，而不是下拉页面
     const currGroup = props.data[currIndex.value];
     return currGroup ? currGroup.title : "";
+  });
+
+  const fixedStyle = computed(() => {
+    const distanceVal = distance.value;
+    const titleHeight = TITLE_HEIGHT.value;
+    const diff =
+      /* 偏移条件，大于0的时候就会fiexedTitle就会返回原有位置，同时此时title已经改变，改好覆盖原有的title栏 */
+      distanceVal > 0 && distanceVal < titleHeight ? distanceVal - titleHeight /* 偏移高度 */ : 0;
+    return {
+      transform: `translateY(${diff}px)`,
+    };
   });
 
   watch(
@@ -18,28 +35,28 @@ export default function useFixed(props) {
     async () => {
       await nextTick(); // 因为calc中的groupRef只有等到vue渲染完成后才能拿到，所以需要等待一个nextTick
       calc();
+      TITLE_HEIGHT.value =
+        1 * getComputedStyle(document.getElementsByClassName("fixed")[0]).height.replace("px", "");
     }
   );
 
-  watch(
-    scrollY,
-    debounce((y) => {
-      // 当滚动变化时，开始判断到底应该显示什么内容
-      for (let i = 0; i < heightsv.length - 1; i++) {
-        if (y >= heightsv[i] && y <= heightsv[i + 1]) {
-          // 如果滚动的高度大于前面元素的高度和，从小到大排序，之所以写成这样是为了性能优化，保证只有一次匹配的机会，即只渲染一次
-          currIndex.value = i;
-        }
+  const forCalc = debounce((y) => {
+    // 当滚动变化时，开始判断到底应该显示什么内容
+    for (let i = 0; i < heightsv.length - 1; i++) {
+      if (y >= heightsv[i] && y <= heightsv[i + 1]) {
+        // 如果滚动的高度大于前面元素的高度和，从小到大排序，之所以写成这样是为了性能优化，保证只有一次匹配的机会，即只渲染一次
+        currIndex.value = i;
+        distance.value = heightsv[i + 1] - y; // 距离顶部的高度
       }
-
-      // 不必要的重复渲染
-      // for (const h of heightsv) {
-      //   // if (y >= h) {
-      //   //   currIndex.value++;
-      //   // }
-      // }
-    }, 100)
-  );
+    }
+    // 不必要的重复渲染，每一次响应式更新都会导致layout
+    // for (const h of heightsv) {
+    //   // if (y >= h) {
+    //   //   currIndex.value++;
+    //   // }
+    // }
+  }, 10);
+  watch(scrollY, forCalc); // 避免每次生成函数，理解debounce后的回调函数和原回调函数的区别与联系，如果在onScroll中
 
   // 计算子元素的高度，首次加载运行时，groupRef为null，需要等待下一个时刻nextTick挂载完成后再运行
   function calc() {
@@ -52,7 +69,6 @@ export default function useFixed(props) {
     for (const child of children) {
       height += child.clientHeight; // 数组的元素值是前面的元素高度和+本身的高度
       heightsv.push(height);
-      console.log(height);
     }
   }
 
@@ -64,5 +80,7 @@ export default function useFixed(props) {
     groupRef,
     onScroll,
     fixedTitle,
+    fixedStyle,
+    currIndex,
   };
 }
