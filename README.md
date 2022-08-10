@@ -189,8 +189,42 @@ return function () {
 ```
 
 ### 性能优化的手段
-- 最好使用的是ref对象，而不是普通的元素对象
+- 最好使用的是ref对象，而不是普通DOM元素对象
+- 宏观上的并发：Promise.all()
+
+### 项目开发技巧
+- 视图展示时的数据处理应尽可能的简单，即视图调用函数得到合适的数据结构。处理数据结构与视图组件分离。
+
+如：在视图组件中，只调用一个方法getSingerDetail，凑成视图组件需要的数据结构单独发放在一个函数或一个文件中，便能达到组件开发的目的。
+```js
+export function getSingerDetail(singer) {
+  return get("/api/getSingerDetail", {
+    mid: singer.mid,
+  });
+}
+```
+
+- 开发接口代理
+前端项目如果需要迭代，一定要开发接口代理，代理接口的功能和视图组件与数据逻辑处理分离两者功能是类似的，目的都是形成单独的组件，不参与数据逻辑处理，由数据驱动页面展示，页面要求数据结构规范。接口代理可以很方便的进行切换，如视图组件中get请求方法，前端中的后端即数据逻辑请求中，可以使用post等方法。
+
+- 重新组织数据结构
+不仅仅需要重新组织前端的接口，前端的数据结构也需要重新组织，如一些具有时限的数据，url，pic等，可能随着时间就会过期，所以前端的数据结构一定要合理组织。
+
+- 如何开发一个组件
+开发一个组件，需要从多个方面去考虑，如需求的功能、拓展的方向、样式的交互，需要清晰的文档要求。
 
 
 ### 常见JS技巧
 - 向下取整： 1.22 | 0 === Math.floor(1.22)
+
+
+### 常见的css技巧
+- 显示区域的宽高比常使用margin、padding，因为margin、padding都是相对于父元素的宽度，在文档流中，子元素margin、padding百分比相对于父元素的content宽度；在脱离标准流中，子元素margin、padding百分比相对于外围第一个定位非static、initial、unset父元素的content+padding的宽度。
+```css
+width: 100%;
+/* height: 0; */
+padding-top: 70%; 
+margin、padding都是相对于父元素的width，height相对于父元素的height。此时显示区域的比值就是10:7，这是常用的固定比值做法。
+```
+
+- overflow不能限制溢出到padding的内容，overflow: hidden; 可以使子元素溢出父元素外后隐藏。padding 是内边距，是元素的一部分，所以溢出到 padding 里不属于溢出父元素，overflow 就不会使之隐藏。即如果设置padding-top: 32px；即使设置overflow:hidden; height=0，高度还是padding-top；
