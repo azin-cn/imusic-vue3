@@ -28,7 +28,12 @@ const props = defineProps({
 const emit = defineEmits(["scroll"]);
 
 const rootRef = ref(null);
-useScroll(rootRef, props, emit);
+const { scroll } = useScroll(rootRef, props, emit);
+
+defineExpose({
+  // 暴露组件的实例，方便进行调用组件实例对应的API方法
+  scroll,
+});
 </script>
 
 <style lang="scss" scoped></style>
