@@ -5,6 +5,9 @@ const Search = () => import("@/views/search.vue");
 const Singer = () => import("@/views/singer.vue");
 const Top = () => import("@/views/top.vue");
 
+// 其他页面
+const SingerDetail = () => import("@/views/singer-detail.vue");
+
 const routes = [
   {
     path: "/",
@@ -21,6 +24,12 @@ const routes = [
   {
     path: "/singer",
     component: Singer,
+    children: [
+      {
+        path: ":id",
+        component: SingerDetail,
+      },
+    ],
   },
   {
     path: "/top",
