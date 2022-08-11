@@ -10,6 +10,7 @@ import "@/assets/scss/index.scss";
 
 // 引入自定义指令
 import loadingDirective from "@/components/base/Loading/directive";
+import noResultDirective from "@/components/base/NoResult/directive";
 
 createApp(App)
   .use(store)
@@ -19,4 +20,5 @@ createApp(App)
     loading: require("@/assets/images/default.jpeg"),
   })
   .directive("loading", loadingDirective)
+  .directive("no-result", noResultDirective)
   .mount("#app");
