@@ -6,7 +6,7 @@
     <h1 class="title">{{ title }}</h1>
     <div ref="bgImageRef" class="bg-image" :style="bgImageStyle">
       <div class="play-btn-wrapper" :style="playBtnStyle">
-        <div class="play-btn" v-show="songs.length">
+        <div class="play-btn" v-show="songs.length" @click="random">
           <i class="icon-play"></i>
           <span class="text">随机播放全部</span>
         </div>
@@ -36,14 +36,14 @@ export default {
 </script>
 
 <script setup>
-import { defineProps, onMounted, ref, reactive, computed, watch } from "vue";
+import { defineProps, onMounted, ref, reactive, computed, nextTick, toRefs } from "vue";
+import { useStore, mapActions } from "vuex";
 import { useRouter } from "vue-router";
 import Scroll from "@/components/base/Scroll";
 import SongList from "@/components/base/SongList";
-
 import { throttle } from "@/utils";
 
-const { songs, title, rank, loading, noResultText, ...props } = defineProps({
+const props = defineProps({
   /** 歌曲列表 */
   songs: {
     type: Array,
@@ -77,6 +77,7 @@ const { songs, title, rank, loading, noResultText, ...props } = defineProps({
 });
 
 const $router = useRouter();
+const $store = useStore();
 const HEAD_HEIGHT = 40;
 const bgImageRef = ref(null);
 
@@ -92,6 +93,7 @@ onMounted(() => {
 });
 
 const noResult = computed(() => {
+  const { loading, songs } = props;
   return !loading && !songs.length; // 加载完成 | 数据长度为0
 });
 
@@ -159,24 +161,25 @@ const scrollStyle = computed(() => {
 });
 
 /** 返回 */
-function goBack() {
-  $router.back();
-}
-
-// /** 随机播放 */
-// function random() {
-//   store.dispatch("randomPlay", { list: props.songs });
-// }
-
+const goBack = () => $router.back();
 /** 监听滚动 */
 const onScroll = throttle((pos) => {
   state.scrollY = -pos.y;
 }, 10);
 
+const [playSelectedSong, randomPlay] = Object.values(
+  mapActions("playerStore", ["playSelectedSong", "randomPlay"])
+).map((it) => it.bind({ $store }));
+
 /** 歌曲选择 */
-// function selectItem({ song, index }) {
-//   store.dispatch("selectPlay", { list });
-// }
+function selectItem({ song, index }) {
+  playSelectedSong({ list: props.songs, index });
+}
+
+// /** 随机播放 */
+function random() {
+  randomPlay({ list: props.songs });
+}
 </script>
 
 <style scoped lang="scss">
