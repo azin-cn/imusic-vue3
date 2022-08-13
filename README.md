@@ -128,6 +128,14 @@ https://www.runoob.com/vue3/vue3-custom-directive.html
 因为子元素高度数组中，提前push了一个0，子元素向后移动1，所以原有的数组元素-滚动高度变为：
 当前元素底部距离父元素顶部的高度 = 下一个元素顶部距离父元素顶部的高度 = 下一个数组元素 - 滚动高度
 
+### script setup 结合 mapState，mapActions等使用
+- 每一个map绑定$store
+```js
+const [playSelectedSong] = Object.values(mapActions("playerStore", ["playSelectedSong"])).map(
+  (it) => it.bind({ $store })
+);
+```
+
 ### debounce throttle 实现
 - debounce 第一次是否运行
 - throttle 最后一次是否运行
@@ -211,7 +219,14 @@ export function getSingerDetail(singer) {
 不仅仅需要重新组织前端的接口，前端的数据结构也需要重新组织，如一些具有时限的数据，url，pic等，可能随着时间就会过期，所以前端的数据结构一定要合理组织。
 
 - 如何开发一个组件
-开发一个组件，需要从多个方面去考虑，如需求的功能、拓展的方向、样式的交互，需要清晰的文档要求。
+开发一个组件，需要从多个方面去考虑，如需求的功能、拓展的方向、样式的交互，需要清晰的文档要求。注意：数据驱动页面显示，处理好数据流向和watch一些问题就很容易解决。必须要先明确组件的需求和数据的定义、流向，这样封装出来的组件才更具有通用性。**组件：数据+页面，规定好数据流向**
+
+- Vue复杂组件使用hooks管理
+
+- 通过数据驱动页面的显示，composition API 很容易进行数据交互，通过函数传递参数，需要注意不要结构对象，否则无法保持响应式功能。
+
+- 在vue中进行dom访问、操作，一般需要在 **nextTick** 后才能够保证正确的环境，设置一个DOM时，注意访问DOM的时机是否正确
+
 
 
 ### 常见JS技巧
