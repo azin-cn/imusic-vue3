@@ -39,7 +39,7 @@ const props = defineProps({
   },
 });
 
-defineEmits(["select"]);
+const emit = defineEmits(["select"]);
 
 /** 详情描述 */
 function getDesc(item) {
