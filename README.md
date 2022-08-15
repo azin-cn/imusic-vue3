@@ -3,6 +3,16 @@
 
 ## 排除bug
 - 不要在dom中编写函数，放在script中定义，否则会出现卡死的bug
+- nginx部署
+```config
+location /api/ { # 如果有api前缀的请求，代理到9000服务上
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header Host $http_host;
+  proxy_set_header X-NginX-Proxy true;
+  proxy_pass http://127.0.0.1:9000/;
+}
+```
 
 ## Project setup
 ```
