@@ -1,14 +1,5 @@
 <template>
-  <Scroll
-    ref="scrollRef"
-    :click="click"
-    :probe-type="probeType"
-    @scroll="
-      (e) => {
-        emit('scroll', e);
-      }
-    "
-  >
+  <Scroll ref="scrollRef" :click="click" :probe-type="probeType" @scroll="onScroll">
     <slot></slot>
   </Scroll>
 </template>
@@ -51,6 +42,10 @@ watch(playlist, async (list) => {
     scroll.value.refresh();
   }
 });
+
+function onScroll(e) {
+  emit("scroll", e);
+}
 
 defineExpose({
   scroll,
