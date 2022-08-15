@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const ERR_OK = 0;
-const BASE_URL = process.env.NODE_ENV === "production" ? "https://music.v3.azin.cn" : "/";
+const BASE_URL = process.env.NODE_ENV === "production" ? "http://music.v3.azin.cn:9000" : "/";
 
 axios.defaults.baseURL = BASE_URL;
 
