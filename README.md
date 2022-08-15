@@ -1,6 +1,9 @@
 # imusic
 搜索接口失效，所以搜索页面不完善。
 
+## 排除bug
+- 不要在dom中编写函数，放在script中定义，否则会出现卡死的bug
+
 ## Project setup
 ```
 npm install
