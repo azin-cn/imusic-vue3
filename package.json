@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "deploy": "npm run build && nohup node backend/prod.server.js"
+    "deploy": "npm run build && nohup node backend/prod.server.js > output.log 2>&1 &"
   },
   "dependencies": {
     "@better-scroll/core": "^2.4.2",
