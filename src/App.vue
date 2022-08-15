@@ -1,7 +1,11 @@
 <template>
   <Header></Header>
   <Tab></Tab>
-  <router-view :style="viewStyle" />
+  <router-view :style="viewStyle" v-slot="{ Component }">
+    <keep-alive>
+      <component :is="Component" />
+    </keep-alive>
+  </router-view>
   <Player></Player>
 </template>
 
