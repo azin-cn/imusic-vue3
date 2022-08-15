@@ -67,6 +67,7 @@ export default function useMiniSlider() {
     });
 
     watch(playlist, async (newList) => {
+      // 每一次更新都需要refresh，等待一个时刻，此时需要判断slider是否存在，已经是否需要显示
       if (sliderVal && sliderShow.value && newList.length) {
         await nextTick();
         sliderVal.refresh();

@@ -21,6 +21,14 @@
         </div>
       </div>
     </Scroll>
+
+    <!-- 通过这种方式传递数据给子路由组件 -->
+    <router-view v-slot="{ Component }">
+      <!-- 动态渲染 Component -->
+      <transition appear name="slide">
+        <component :is="Component" :data="selectedAlbum" />
+      </transition>
+    </router-view>
   </div>
 </template>
 
@@ -32,22 +40,35 @@ export default {
 
 <script setup>
 import { onMounted, ref, computed } from "vue";
+import { useRouter } from "vue-router";
 
-import Scroll from "@/components/base/Scroll";
+import Scroll from "@/components/base/WrapperScroll";
 import Slider from "@/components/base/Slider";
 
 import { getRecom } from "@/service/recom";
+import { CACHE_ALBUM } from "@/assets/js/constants";
+import storage from "good-storage";
 
-const loadingText = "正在加载..."
+const $router = useRouter();
+const loadingText = "正在加载...";
 const sliders = ref([]),
   albums = ref([]);
 const loading = computed(() => !albums.value.length);
+const selectedAlbum = ref(null);
 
 onMounted(async () => {
   let result = await getRecom();
   sliders.value = result.sliders;
   albums.value = result.albums;
 });
+
+function selectAlbum(album) {
+  selectedAlbum.value = album; // 保留当前选中的singer，以防后面刷新丢失数据
+  storage.session.set(CACHE_ALBUM, album);
+  $router.push({
+    path: `/recom/${album.id}`,
+  });
+}
 </script>
 
 <style scoped lang="scss">

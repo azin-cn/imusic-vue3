@@ -39,7 +39,7 @@ export default {
 import { defineProps, onMounted, ref, reactive, computed, nextTick, toRefs } from "vue";
 import { useStore, mapActions } from "vuex";
 import { useRouter } from "vue-router";
-import Scroll from "@/components/base/Scroll";
+import Scroll from "@/components/base/WrapperScroll";
 import SongList from "@/components/base/SongList";
 import { throttle } from "@/utils";
 
@@ -157,6 +157,7 @@ const filterStyle = computed(() => {
 const scrollStyle = computed(() => {
   return {
     top: `${state.imageHeight}px`,
+    bottom: $store.state["playerStore"]["playlist"].length ? "60px" : "0",
   };
 });
 

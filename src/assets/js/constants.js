@@ -1,4 +1,6 @@
 export const CACHE_SINGER = "__singer__";
+export const CACHE_ALBUM = "__album__";
+export const CACHE_TOP_LIST = "__top_list__";
 
 export const FAVORITE_LIST = "__favorite_list__";
 

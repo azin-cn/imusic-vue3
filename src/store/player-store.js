@@ -113,7 +113,12 @@ const actions = {
       return list.findIndex((item) => item.mid === song.mid);
     }
   },
-  clearSongList() {},
+  clearSongList({ state, commit }) {
+    commit(SET_SEQUENCE_LIST, []);
+    commit(SET_PLAYLIST, []);
+    commit(SET_CURRENT_INDEX, false);
+    commit(SET_PLAYING, false);
+  },
 };
 
 export const playerStore = {

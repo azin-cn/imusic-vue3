@@ -44,7 +44,7 @@ export default defineComponent({
 
 <script setup>
 import { defineProps, defineEmits } from "vue";
-import Scroll from "@/components/base/Scroll";
+import Scroll from "@/components/base/WrapperScroll";
 import useFixed from "./use-fixed";
 import useShortcut from "./use-shortcut";
 

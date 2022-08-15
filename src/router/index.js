@@ -7,6 +7,8 @@ const Top = () => import("@/views/top.vue");
 
 // 其他页面
 const SingerDetail = () => import("@/views/singer-detail.vue");
+const RecomAlbum = () => import("@/views/recom-album.vue");
+const TopDetail = () => import("@/views/top-detail");
 
 const routes = [
   {
@@ -16,6 +18,12 @@ const routes = [
   {
     path: "/recom",
     component: Recom,
+    children: [
+      {
+        path: ":id",
+        component: RecomAlbum,
+      },
+    ],
   },
   {
     path: "/search",
@@ -34,6 +42,12 @@ const routes = [
   {
     path: "/top",
     component: Top,
+    children: [
+      {
+        path: ":id",
+        component: TopDetail,
+      },
+    ],
   },
 ];
 

@@ -98,7 +98,11 @@
     </transition>
 
     <!-- 迷你播放器 -->
-    <MiniPlayer :progress="progress" :toggle-play="togglePlay" :playingLyric="playingLyric" />
+    <MiniPlayer
+      :progress="progress"
+      :toggle-play="togglePlay"
+      :playingLyric="playingLyric"
+    />
     <audio
       ref="audioRef"
       @pause="pause"
@@ -107,7 +111,6 @@
       @timeupdate="updateTime"
       @ended="end"
     />
-  
   </div>
 </template>
 

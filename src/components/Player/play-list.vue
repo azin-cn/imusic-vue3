@@ -32,7 +32,8 @@
             </transition-group>
           </Scroll>
           <div class="list-add">
-            <div class="add" @click="showAddSong">
+            <div class="add">
+              <!-- @click="showAddSong" -->
               <i class="icon-add"></i>
               <span class="text">添加歌曲到队列</span>
             </div>
@@ -41,13 +42,13 @@
             <span>关闭</span>
           </div>
         </div>
-        <!-- <confirm
+        <Confirm
           ref="confirmRef"
           text="是否清空播放列表？"
           confirm-btn-text="清空"
           @confirm="confirmClear"
         />
-        <add-song ref="addSongRef" /> -->
+        <!-- <add-song ref="addSongRef" /> -->
       </div>
     </transition>
   </teleport>
@@ -62,8 +63,7 @@ export default {
 <script setup>
 import { defineExpose, computed, nextTick, ref, reactive, watch } from "vue";
 import { useStore } from "vuex";
-// import { promiseTimeout } from "@vueuse/core";
-// import Confirm from "@/components/base/confirm/index.vue";
+import Confirm from "@/components/base/Confirm";
 // import AddSong from "@/components/add-song/index.vue";
 import { useMapState } from "@/utils";
 
@@ -132,7 +132,8 @@ async function removeSong(song) {
   removing.value = true;
   await $store.dispatch("playerStore/removeSong", { song });
   if (!playlist.value.length) hide();
-  // await promiseTimeout(300);
+
+  // 当快速点击删除时进行限制
   removing.value = false;
 }
 

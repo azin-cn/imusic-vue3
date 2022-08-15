@@ -1,4 +1,5 @@
 # imusic
+搜索接口失效，所以搜索页面不完善。
 
 ## Project setup
 ```
@@ -227,6 +228,13 @@ export function getSingerDetail(singer) {
 
 - 在vue中进行dom访问、操作，一般需要在 **nextTick** 后才能够保证正确的环境，设置一个DOM时，注意访问DOM的时机是否正确
 
+- 逻辑、边界的情况一定需要清楚，否则看似解决一个bug写出的代码又会引入另外一个bug，所以理清楚数据流向和DOM的更新时间才是解决bug的方式
+
+- 通过optionsAPI封装一个组件，通过定义传入的数据来决定产生哪种类型的组件，通常定义为一个类型相同的组件类型。对于普通的optionsAPI组件来说，定义为一个组件方法进行复用或许更加的合适，因为optionsAPI是一个对象，如果时setup script 比较难以实现复用。
+
+- 通过控制某一些属性来控制组件渲染不同的形式，普通的列表 || 排行的列表
+
+- v-model的流向和props的修改，如何实现双向绑定过程，watch必须要是一个响应式对象 | getter |effect函数，props.value 形式是一个普通值对象。
 
 
 ### 常见JS技巧

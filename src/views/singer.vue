@@ -40,9 +40,6 @@ function selectSinger(singer) {
   storage.session.set(CACHE_SINGER, singer);
   $router.push({
     path: `/singer/${singer.mid}`,
-    params: {
-      singer,
-    },
   });
 }
 </script>

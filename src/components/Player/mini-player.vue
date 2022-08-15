@@ -1,6 +1,6 @@
 <template>
   <Transition name="mini">
-    <div class="mini-player" v-show="!fullScreen" @click="showNormalPlayer">
+    <div class="mini-player" v-show="!fullScreen && playlist.length" @click="showNormalPlayer">
       <div class="cd-wrapper">
         <div ref="cdRef" class="cd">
           <img
