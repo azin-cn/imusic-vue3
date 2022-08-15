@@ -18,5 +18,8 @@ module.exports = defineConfig({
   },
   productionSourceMap: false,
   // publicPath: "./", 默认
-  assetsDir: "static",
+  // assetsDir: "static",
+
+    // 设置生成的 HTML 中 <link rel="stylesheet"> 和 <script> 标签的 crossorigin 属性
+    crossorigin: undefined,
 });
