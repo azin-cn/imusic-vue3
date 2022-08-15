@@ -3,6 +3,7 @@ const compression = require("compression");
 const cookieParser = require("cookie-parser");
 const csrf = require("xsrf");
 const registerRouter = require("./router");
+const morgan = require("morgan");
 
 const port = 9000;
 
@@ -15,14 +16,11 @@ const csrfProtection = csrf({
 });
 app.use(cookieParser());
 app.use(csrfProtection);
+app.use(morgan(":method :url :status :res[content-length] - :response-time ms"));
 
 app.get("/", function (req, res, next) {
   res.cookie("XSRF-TOKEN", req.csrfToken());
   return next();
-});
-app.use((err, req, res, next) => {
-  console.log(req.url);
-  next();
 });
 
 registerRouter(app);
