@@ -3,9 +3,9 @@
 
 ## 排除bug
 - 不要在dom中编写函数，放在script中定义，否则会出现卡死的bug
-- nginx部署
+- 服务器nginx部署，简单来说就是为了防止端口不一样导致的跨域，可以直接在服务端中配置代理
 ```config
-location /api/ { # 如果有api前缀的请求，代理到9000服务上
+location / { # 如果有请求，代理到9000服务上，常用来解决跨域问题，注意需要和项目中保持一致
   proxy_set_header X-Real-IP $remote_addr;
   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
   proxy_set_header Host $http_host;
