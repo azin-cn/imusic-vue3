@@ -16,4 +16,7 @@ module.exports = defineConfig({
       registerRouter(app);
     },
   },
+  productionSourceMap: false,
+  // publicPath: "./", 默认
+  assetsDir: "static",
 });

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const ERR_OK = 0;
-const BASE_URL = "/";
+const BASE_URL = process.env.NODE_ENV === "production" ? "https://music.v3.azin.cn" : "/";
 
 axios.defaults.baseURL = BASE_URL;
 
@@ -17,8 +17,5 @@ export function get(url, params) {
         return data.result;
       }
     })
-    .catch(() => {
-      console.log("网络错误");
-      return "网络错误";
-    });
+    .catch(console.log);
 }
